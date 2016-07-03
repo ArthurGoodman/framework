@@ -19,3 +19,12 @@ void MainWindow::keyPressEvent(KeyEvent *e) {
         break;
     }
 }
+
+void MainWindow::paintEvent() {
+    Painter p(this);
+
+    p.fillRect(rect(), Color(211, 211, 211));
+
+    p.setColor(Color(255, 0, 0));
+    p.drawLine(200, 200, 671, 102);
+}

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <windef.h>
+#include <windows.h>
 #include <map>
 
+#include "canvas.h"
 #include "size.h"
 #include "rectangle.h"
 #include "point.h"
@@ -13,8 +14,10 @@
 
 namespace fr {
 
-class Window {
+class Window : public Canvas {
     static std::map<HWND, Window *> windows;
+
+    PAINTSTRUCT ps;
 
     HWND hWnd;
 
@@ -38,14 +41,20 @@ public:
 
     Point position() const;
 
-    int width() const;
-    int height() const;
-
     void close();
 
     void show();
 
     Image capture() const;
+
+    HDC begin();
+    void end();
+
+    int getPixel(int x, int y) const;
+    void setPixel(int x, int y, int rgba);
+
+    int width() const;
+    int height() const;
 
 protected:
     virtual void closeEvent();

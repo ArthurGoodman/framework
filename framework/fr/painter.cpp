@@ -1,9 +1,16 @@
 #include "painter.h"
 
+#include <windows.h>
 #include <algorithm>
+//#include <gdiplus.h>
 
 fr::Painter::Painter(Canvas *canvas)
     : canvas(canvas), color(Color::rgb(0, 0, 0)) {
+    hdc = canvas->begin();
+}
+
+fr::Painter::~Painter() {
+    canvas->end();
 }
 
 void fr::Painter::setColor(int rgba) {
@@ -19,6 +26,25 @@ void fr::Painter::setColor(const Color &color) {
 }
 
 void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
+    if (hdc) {
+        HPEN hPen = CreatePen(PS_SOLID, 1, 0);
+
+        SelectObject(hdc, GetStockObject(DC_PEN));
+        SetDCPenColor(hdc, RGB(Color::red(color), Color::green(color), Color::blue(color)));
+
+        MoveToEx(hdc, x0, y0, 0);
+        LineTo(hdc, x1, y1);
+
+        DeleteObject(hPen);
+
+        //        using namespace Gdiplus;
+        //        Graphics g(hdc);
+        //        Pen pen(Gdiplus::Color(255, 0, 0));
+        //        g.DrawLine(&pen, x0, y0, x1, y1);
+
+        return;
+    }
+
     int dx = abs(x1 - x0);
     int dy = abs(y1 - y0);
 
@@ -64,4 +90,17 @@ void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
 
 void fr::Painter::drawLine(const Point &p0, const Point &p1) {
     drawLine(p0.x(), p0.y(), p1.x(), p1.y());
+}
+
+void fr::Painter::fillRect(const Rectangle &rect, const Color &color) {
+    if (hdc) {
+        RECT r = {rect.left(), rect.top(), rect.right(), rect.bottom()};
+        HBRUSH hBrush = CreateSolidBrush(RGB(color.red(), color.green(), color.blue()));
+
+        SelectObject(hdc, GetStockObject(DC_BRUSH));
+
+        FillRect(hdc, &r, hBrush);
+
+        DeleteObject(hBrush);
+    }
 }

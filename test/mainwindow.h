@@ -9,4 +9,5 @@ public:
 protected:
     void closeEvent();
     void keyPressEvent(KeyEvent *e);
+    void paintEvent();
 };

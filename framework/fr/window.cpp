@@ -1,6 +1,5 @@
 #include "window.h"
 
-#include <windows.h>
 #include <windowsx.h>
 
 #include "application.h"
@@ -118,18 +117,6 @@ fr::Point fr::Window::position() const {
     return Point(rect.left, rect.top);
 }
 
-int fr::Window::width() const {
-    RECT rect;
-    GetClientRect(hWnd, &rect);
-    return rect.right - rect.left;
-}
-
-int fr::Window::height() const {
-    RECT rect;
-    GetClientRect(hWnd, &rect);
-    return rect.bottom - rect.top;
-}
-
 void fr::Window::close() {
     DestroyWindow(hWnd);
 }
@@ -179,6 +166,33 @@ fr::Image fr::Window::capture() const {
     ReleaseDC(0, hdc);
 
     return image;
+}
+
+HDC fr::Window::begin() {
+    return BeginPaint(hWnd, &ps);
+}
+
+void fr::Window::end() {
+    EndPaint(hWnd, &ps);
+}
+
+int fr::Window::getPixel(int /*x*/, int /*y*/) const {
+    return 0;
+}
+
+void fr::Window::setPixel(int /*x*/, int /*y*/, int /*rgba*/) {
+}
+
+int fr::Window::width() const {
+    RECT rect;
+    GetClientRect(hWnd, &rect);
+    return rect.right - rect.left;
+}
+
+int fr::Window::height() const {
+    RECT rect;
+    GetClientRect(hWnd, &rect);
+    return rect.bottom - rect.top;
 }
 
 void fr::Window::closeEvent() {
@@ -327,18 +341,9 @@ LRESULT CALLBACK fr::Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         break;
     }
 
-    case WM_PAINT: {
-        PAINTSTRUCT ps;
-        HDC dc;
-        RECT r;
-        GetClientRect(hWnd, &r);
-        dc = BeginPaint(hWnd, &ps);
-        DrawText(dc, L"Hello World", -1, &r, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-        MoveToEx(dc, 100, 100, NULL);
-        LineTo(dc, 120, 230);
-        EndPaint(hWnd, &ps);
+    case WM_PAINT:
+        window->paintEvent();
         break;
-    }
 
     default:
         return DefWindowProc(hWnd, msg, wParam, lParam);
