@@ -1,5 +1,7 @@
 #pragma once
 
+#include <windows.h>
+
 namespace fr {
 
 class Point {
@@ -19,5 +21,7 @@ public:
     Point operator-(const Point &p) const;
     Point operator*(int f) const;
     Point operator/(int f) const;
+
+    POINT toNative() const;
 };
 }

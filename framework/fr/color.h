@@ -1,5 +1,7 @@
 #pragma once
 
+#include <windows.h>
+
 #include "common.h"
 
 namespace fr {
@@ -18,6 +20,7 @@ public:
 
     Color();
     Color(byte r, byte g, byte b, byte a = 255);
+    Color(int rgba);
 
     byte red() const;
     byte green() const;
@@ -25,5 +28,7 @@ public:
     byte alpha() const;
 
     int rgba() const;
+
+    COLORREF toNative() const;
 };
 }

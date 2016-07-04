@@ -32,6 +32,10 @@ fr::Color::Color(byte r, byte g, byte b, byte a)
     : r(r), g(g), b(b), a(a) {
 }
 
+fr::Color::Color(int rgba)
+    : r(red(rgba)), g(green(rgba)), b(blue(rgba)), a(alpha(rgba)) {
+}
+
 byte fr::Color::red() const {
     return r;
 }
@@ -50,4 +54,8 @@ byte fr::Color::alpha() const {
 
 int fr::Color::rgba() const {
     return rgba(r, g, b, a);
+}
+
+COLORREF fr::Color::toNative() const {
+    return RGB(r, g, b);
 }

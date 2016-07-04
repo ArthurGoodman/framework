@@ -11,7 +11,7 @@ class Painter {
     Canvas *canvas;
     HDC hdc;
 
-    int color;
+    Color color;
 
 public:
     Painter(Canvas *canvas);

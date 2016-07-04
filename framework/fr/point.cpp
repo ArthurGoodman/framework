@@ -39,3 +39,7 @@ fr::Point fr::Point::operator*(int f) const {
 fr::Point fr::Point::operator/(int f) const {
     return Point(_x / f, _y / f);
 }
+
+POINT fr::Point::toNative() const {
+    return {_x, _y};
+}

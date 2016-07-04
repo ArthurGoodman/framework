@@ -22,7 +22,7 @@ void fr::Painter::setColor(byte r, byte g, byte b, byte a) {
 }
 
 void fr::Painter::setColor(const Color &color) {
-    this->color = color.rgba();
+    this->color = color;
 }
 
 void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
@@ -30,7 +30,7 @@ void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
         HPEN hPen = CreatePen(PS_SOLID, 1, 0);
 
         SelectObject(hdc, GetStockObject(DC_PEN));
-        SetDCPenColor(hdc, RGB(Color::red(color), Color::green(color), Color::blue(color)));
+        SetDCPenColor(hdc, color.toNative());
 
         MoveToEx(hdc, x0, y0, 0);
         LineTo(hdc, x1, y1);
@@ -45,6 +45,8 @@ void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
         return;
     }
 
+    int rgba = color.rgba();
+
     int dx = abs(x1 - x0);
     int dy = abs(y1 - y0);
 
@@ -57,7 +59,7 @@ void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
         int d1 = dy << 1;
         int d2 = (dy - dx) << 1;
 
-        canvas->setPixel(x0, y0, color);
+        canvas->setPixel(x0, y0, rgba);
 
         for (int x = x0 + sx, y = y0, i = 1; i <= dx; i++, x += sx) {
             if (d > 0) {
@@ -66,7 +68,7 @@ void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
             } else
                 d += d1;
 
-            canvas->setPixel(x, y, color);
+            canvas->setPixel(x, y, rgba);
         }
     } else {
         int d = (dx << 1) - dy;
@@ -74,7 +76,7 @@ void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
         int d1 = dx << 1;
         int d2 = (dx - dy) << 1;
 
-        canvas->setPixel(x0, y0, color);
+        canvas->setPixel(x0, y0, rgba);
 
         for (int y = y0 + sy, x = x0, i = 1; i <= dy; i++, y += sy) {
             if (d > 0) {
@@ -83,7 +85,7 @@ void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
             } else
                 d += d1;
 
-            canvas->setPixel(x, y, color);
+            canvas->setPixel(x, y, rgba);
         }
     }
 }
@@ -94,8 +96,8 @@ void fr::Painter::drawLine(const Point &p0, const Point &p1) {
 
 void fr::Painter::fillRect(const Rectangle &rect, const Color &color) {
     if (hdc) {
-        RECT r = {rect.left(), rect.top(), rect.right(), rect.bottom()};
-        HBRUSH hBrush = CreateSolidBrush(RGB(color.red(), color.green(), color.blue()));
+        RECT r = rect.toNative();
+        HBRUSH hBrush = CreateSolidBrush(color.toNative());
 
         SelectObject(hdc, GetStockObject(DC_BRUSH));
 

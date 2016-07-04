@@ -18,8 +18,11 @@ class Window : public Canvas {
     static std::map<HWND, Window *> windows;
 
     PAINTSTRUCT ps;
+    HDC hdc;
 
     HWND hWnd;
+
+    Size minSize, maxSize;
 
 public:
     static Window *find(HWND hWnd);
@@ -35,6 +38,26 @@ public:
 
     std::string title() const;
     void setTitle(const std::string title);
+
+    int minimumWidth() const;
+    void setMinimumWidth(int width);
+
+    int maximumWidth() const;
+    void setMaximumWidth(int width);
+
+    int minimumHeight() const;
+    void setMinimumHeight(int height);
+
+    int maximumHeight() const;
+    void setMaximumHeight(int height);
+
+    Size minimumSize() const;
+    void setMinimumSize(const Size &size);
+    void setMinimumSize(int width, int height);
+
+    Size maximumSize() const;
+    void setMaximumSize(const Size &size);
+    void setMaximumSize(int width, int height);
 
     Size size() const;
     Rectangle rect() const;
@@ -74,5 +97,8 @@ private:
     static LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 
     Window(HWND hWnd);
+
+    void initialize();
+    void defaults();
 };
 }
