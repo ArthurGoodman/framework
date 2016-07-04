@@ -23,7 +23,7 @@ public:
 
     Color();
     Color(byte r, byte g, byte b, byte a = 255);
-    Color(int rgba);
+    explicit Color(int rgba);
 
     byte red() const;
     byte green() const;

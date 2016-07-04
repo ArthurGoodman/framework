@@ -209,16 +209,16 @@ void fr::Window::update() {
 fr::Image fr::Window::capture() const {
     HDC hdc = GetDC(hWnd);
     HDC hdcMemory = CreateCompatibleDC(hdc);
-    HBITMAP hbmp = CreateCompatibleBitmap(hdc, width(), height());
+    HBITMAP hBmp = CreateCompatibleBitmap(hdc, width(), height());
 
-    SelectObject(hdcMemory, hbmp);
+    HGDIOBJ hBmpOld = SelectObject(hdcMemory, hBmp);
 
     BitBlt(hdcMemory, 0, 0, width(), height(), hdc, 0, 0, SRCCOPY);
 
     BITMAPINFO info;
     info.bmiHeader.biSize = sizeof(info.bmiHeader);
 
-    if (!GetDIBits(hdc, hbmp, 0, 0, NULL, &info, DIB_RGB_COLORS))
+    if (!GetDIBits(hdc, hBmp, 0, 0, NULL, &info, DIB_RGB_COLORS))
         return Image();
 
     info.bmiHeader.biCompression = BI_RGB;
@@ -226,11 +226,13 @@ fr::Image fr::Window::capture() const {
 
     Image image(info.bmiHeader.biWidth, -info.bmiHeader.biHeight);
 
-    if (!GetDIBits(hdc, hbmp, 0, info.bmiHeader.biHeight, image.bits(), &info, DIB_RGB_COLORS))
+    if (!GetDIBits(hdc, hBmp, 0, info.bmiHeader.biHeight, image.bits(), &info, DIB_RGB_COLORS))
         return Image();
 
+    SelectObject(hdcMemory, hBmpOld);
+
+    DeleteObject(hBmp);
     DeleteDC(hdcMemory);
-    DeleteObject(hbmp);
     ReleaseDC(0, hdc);
 
     return image;

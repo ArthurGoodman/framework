@@ -31,11 +31,11 @@ fr::Painter::~Painter() {
 }
 
 void fr::Painter::setColor(int rgba) {
-    color = rgba;
+    color = Color(rgba);
 }
 
 void fr::Painter::setColor(byte r, byte g, byte b, byte a) {
-    color = Color::rgba(r, g, b, a);
+    color = Color(r, g, b, a);
 }
 
 void fr::Painter::setColor(const Color &color) {
@@ -128,6 +128,12 @@ void fr::Painter::fillRect(const Rectangle &rect, const Color &color) {
 
         return;
     }
+
+    int rgba = color.rgba();
+
+    for (int i = rect.left(); i <= rect.right(); i++)
+        for (int j = rect.top(); j <= rect.bottom(); j++)
+            canvas->setPixel(i, j, rgba);
 }
 
 void fr::Painter::fillRect(int x, int y, int width, int height, const fr::Color &color) {
