@@ -140,7 +140,7 @@ void fr::Painter::drawImage(int x, int y, const Image &image) {
 
         HGDIOBJ oldBitmap = SelectObject(hdcMem, hBitmap);
 
-        BitBlt(hdc, 0, 0, image.width(), image.height(), hdcMem, 0, 0, SRCCOPY);
+        BitBlt(hdc, x, y, image.width(), image.height(), hdcMem, 0, 0, SRCCOPY);
 
         SelectObject(hdcMem, oldBitmap);
 
