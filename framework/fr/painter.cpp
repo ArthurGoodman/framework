@@ -11,10 +11,10 @@ fr::Painter::Painter(Canvas *canvas)
         hBmp = CreateCompatibleBitmap(hdcWindow, canvas->width(), canvas->height());
         hBmpOld = SelectObject(hdc, hBmp);
 
-        RECT rc = Rectangle(0, 0, canvas->width(), canvas->height()).toNative();
+        RECT rc = {0, 0, canvas->width(), canvas->height()};
         FillRect(hdc, &rc, (HBRUSH)COLOR_WINDOW);
 
-        SetBkMode(hdc, TRANSPARENT);
+        // SetBkMode(hdc, TRANSPARENT);
     }
 }
 
