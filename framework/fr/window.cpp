@@ -442,7 +442,7 @@ void fr::Window::initialize() {
     wc.lpszMenuName = NULL;
 
     std::string title = Application::instance()->moduleFileName();
-    std::wstring wtitle(title.length(), L'#');
+    std::wstring wtitle(title.length(), L'\0');
 
     mbstowcs(&wtitle[0], title.data(), title.length());
 

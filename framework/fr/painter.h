@@ -4,6 +4,7 @@
 #include "point.h"
 #include "canvas.h"
 #include "rectangle.h"
+#include "image.h"
 
 namespace fr {
 
@@ -28,5 +29,7 @@ public:
     void fillRect(const Rectangle &rect, const Color &color);
 
     void drawEllipse(int x, int y, int w, int h);
+
+    void drawImage(int x, int y, const Image &image);
 };
 }

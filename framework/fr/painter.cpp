@@ -132,3 +132,25 @@ void fr::Painter::drawEllipse(int x, int y, int w, int h) {
         return;
     }
 }
+
+void fr::Painter::drawImage(int x, int y, const Image &image) {
+    if (hdc) {
+        HBITMAP hBitmap = CreateBitmap(image.width(), image.height(), 1, 32, image.bits());
+        HDC hdcMem = CreateCompatibleDC(hdc);
+
+        HGDIOBJ oldBitmap = SelectObject(hdcMem, hBitmap);
+
+        BitBlt(hdc, 0, 0, image.width(), image.height(), hdcMem, 0, 0, SRCCOPY);
+
+        SelectObject(hdcMem, oldBitmap);
+
+        DeleteDC(hdcMem);
+        DeleteObject(hBitmap);
+
+        return;
+    }
+
+    for (int i = 0; i < image.width(); i++)
+        for (int j = 0; j < image.height(); j++)
+            canvas->setPixel(x + i, y + j, image.getPixel(i, j));
+}
