@@ -49,6 +49,8 @@ class Image : public Canvas {
 public:
     Image();
     Image(int width, int height);
+    Image(const Size &size);
+    Image(const std::string &fileName);
     Image(const Image &image);
     Image(Image &&image);
     ~Image();
@@ -63,6 +65,9 @@ public:
 
     void fill(int rgba);
     void fill(const Color &color);
+
+    Image scaled(const Size &size) const;
+    Image scaled(int width, int height) const;
 
     int getPixel(int x, int y) const;
     void setPixel(int x, int y, int rgba);

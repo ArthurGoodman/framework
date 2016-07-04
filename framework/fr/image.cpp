@@ -2,8 +2,6 @@
 
 #include <windows.h>
 
-#include <iostream>
-
 fr::Image::Image()
     : data(0), w(0), h(0) {
 }
@@ -12,6 +10,58 @@ fr::Image::Image(int width, int height)
     : w(width), h(height) {
     data = new byte[rawSize()];
     std::fill((int *)data, (int *)(data + rawSize()), Color::bgra(0, 0, 0, 255));
+}
+
+fr::Image::Image(const Size &size)
+    : w(size.width()), h(size.height()) {
+    data = new byte[rawSize()];
+    std::fill((int *)data, (int *)(data + rawSize()), Color::bgra(0, 0, 0, 255));
+}
+
+fr::Image::Image(const std::string &fileName) {
+    HDC hdc = GetDC(0);
+
+    HDC hdcMem = CreateCompatibleDC(hdc);
+    HBITMAP hBitmap = (HBITMAP)LoadImageA(0, fileName.data(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+
+    HGDIOBJ oldBitmap = SelectObject(hdcMem, hBitmap);
+
+    BITMAP bitmap;
+    GetObject(hBitmap, sizeof(BITMAP), &bitmap);
+
+    w = bitmap.bmWidth;
+    h = bitmap.bmHeight;
+
+    data = new byte[rawSize()];
+
+    BITMAPINFO info;
+    info.bmiHeader.biWidth = width();
+    info.bmiHeader.biHeight = -height();
+    info.bmiHeader.biBitCount = 32;
+    info.bmiHeader.biPlanes = 1;
+    info.bmiHeader.biCompression = 0;
+    info.bmiHeader.biSize = sizeof(BITMAPINFO);
+
+    void *bits;
+
+    HDC hdcResultMem = CreateCompatibleDC(hdc);
+    HBITMAP hResultBitmap = CreateDIBSection(hdcResultMem, &info, DIB_RGB_COLORS, &bits, 0, 0);
+
+    HGDIOBJ oldResultBitmap = SelectObject(hdcResultMem, hResultBitmap);
+
+    BitBlt(hdcResultMem, 0, 0, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
+
+    SelectObject(hdcMem, oldBitmap);
+
+    DeleteDC(hdcMem);
+    DeleteObject(hBitmap);
+
+    memcpy(data, bits, rawSize());
+
+    SelectObject(hdcResultMem, oldResultBitmap);
+
+    DeleteDC(hdcResultMem);
+    DeleteObject(hResultBitmap);
 }
 
 fr::Image::Image(const Image &image)
@@ -90,6 +140,53 @@ void fr::Image::fill(int rgba) {
 
 void fr::Image::fill(const Color &color) {
     fill(color.rgba());
+}
+
+fr::Image fr::Image::scaled(const Size &size) const {
+    Image result(size);
+
+    HDC hdc = GetDC(0);
+
+    HDC hdcMem = CreateCompatibleDC(hdc);
+    HBITMAP hBitmap = CreateBitmap(width(), height(), 1, 32, bits());
+
+    HGDIOBJ oldBitmap = SelectObject(hdcMem, hBitmap);
+
+    BITMAPINFO info;
+    info.bmiHeader.biWidth = result.width();
+    info.bmiHeader.biHeight = -result.height();
+    info.bmiHeader.biBitCount = 32;
+    info.bmiHeader.biPlanes = 1;
+    info.bmiHeader.biCompression = 0;
+    info.bmiHeader.biSize = sizeof(BITMAPINFO);
+
+    void *bits;
+
+    HDC hdcResultMem = CreateCompatibleDC(hdc);
+    HBITMAP hResultBitmap = CreateDIBSection(hdcResultMem, &info, DIB_RGB_COLORS, &bits, 0, 0);
+
+    HGDIOBJ oldResultBitmap = SelectObject(hdcResultMem, hResultBitmap);
+
+    SetStretchBltMode(hdcResultMem, HALFTONE);
+    StretchBlt(hdcResultMem, 0, 0, result.width(), result.height(), hdcMem, 0, 0, width(), height(), SRCCOPY);
+
+    SelectObject(hdcMem, oldBitmap);
+
+    DeleteDC(hdcMem);
+    DeleteObject(hBitmap);
+
+    memcpy(result.bits(), bits, result.rawSize());
+
+    SelectObject(hdcResultMem, oldResultBitmap);
+
+    DeleteDC(hdcResultMem);
+    DeleteObject(hResultBitmap);
+
+    return result;
+}
+
+fr::Image fr::Image::scaled(int width, int height) const {
+    return scaled(Size(width, height));
 }
 
 int fr::Image::getPixel(int x, int y) const {
