@@ -66,7 +66,16 @@ public:
 
     void close();
 
+    bool isMinimized() const;
+    bool isMaximized() const;
+    bool isVisible() const;
+
     void show();
+
+    void showNormal();
+    void showMinimized();
+    void showMaximized();
+    void hide();
 
     Image capture() const;
 

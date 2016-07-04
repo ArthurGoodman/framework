@@ -24,6 +24,9 @@ public:
     void drawLine(int x1, int y1, int x2, int y2);
     void drawLine(const Point &p1, const Point &p2);
 
+    void drawRect(const Rectangle &rect);
     void fillRect(const Rectangle &rect, const Color &color);
+
+    void drawEllipse(int x, int y, int w, int h);
 };
 }

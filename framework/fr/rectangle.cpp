@@ -24,6 +24,22 @@ int fr::Rectangle::bottom() const {
     return _bottom;
 }
 
+fr::Point fr::Rectangle::topLeft() const {
+    return Point(_left, _top);
+}
+
+fr::Point fr::Rectangle::topRight() const {
+    return Point(_right, _top);
+}
+
+fr::Point fr::Rectangle::bottomLeft() const {
+    return Point(_left, _bottom);
+}
+
+fr::Point fr::Rectangle::bottomRight() const {
+    return Point(_right, _bottom);
+}
+
 fr::Point fr::Rectangle::center() const {
     return Point((_left + _right) / 2, (_top + _bottom) / 2);
 }

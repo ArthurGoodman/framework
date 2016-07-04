@@ -27,20 +27,19 @@ void fr::Painter::setColor(const Color &color) {
 
 void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
     if (hdc) {
-        HPEN hPen = CreatePen(PS_SOLID, 1, 0);
+        HPEN hPen = CreatePen(PS_SOLID, 1, color.toNative());
 
-        SelectObject(hdc, GetStockObject(DC_PEN));
-        SetDCPenColor(hdc, color.toNative());
+        SelectObject(hdc, hPen);
 
         MoveToEx(hdc, x0, y0, 0);
         LineTo(hdc, x1, y1);
 
         DeleteObject(hPen);
 
-        //        using namespace Gdiplus;
-        //        Graphics g(hdc);
-        //        Pen pen(Gdiplus::Color(255, 0, 0));
-        //        g.DrawLine(&pen, x0, y0, x1, y1);
+        // using namespace Gdiplus;
+        // Graphics g(hdc);
+        // Pen pen(Gdiplus::Color(255, 0, 0));
+        // g.DrawLine(&pen, x0, y0, x1, y1);
 
         return;
     }
@@ -94,15 +93,42 @@ void fr::Painter::drawLine(const Point &p0, const Point &p1) {
     drawLine(p0.x(), p0.y(), p1.x(), p1.y());
 }
 
+void fr::Painter::drawRect(const Rectangle &rect) {
+    drawLine(rect.topLeft(), rect.topRight());
+    drawLine(rect.topRight(), rect.bottomRight());
+    drawLine(rect.bottomRight(), rect.bottomLeft());
+    drawLine(rect.bottomLeft(), rect.topLeft());
+}
+
 void fr::Painter::fillRect(const Rectangle &rect, const Color &color) {
     if (hdc) {
         RECT r = rect.toNative();
         HBRUSH hBrush = CreateSolidBrush(color.toNative());
 
-        SelectObject(hdc, GetStockObject(DC_BRUSH));
-
         FillRect(hdc, &r, hBrush);
 
         DeleteObject(hBrush);
+
+        return;
+    }
+}
+
+void fr::Painter::drawEllipse(int x, int y, int w, int h) {
+    if (hdc) {
+        int left = x - w / 2;
+        int top = y - h / 2;
+        int right = x + w / 2;
+        int bottom = y + h / 2;
+
+        HPEN hPen = CreatePen(PS_SOLID, 1, color.toNative());
+
+        SelectObject(hdc, hPen);
+        SelectObject(hdc, GetStockObject(NULL_BRUSH));
+
+        Ellipse(hdc, left, top, right, bottom);
+
+        DeleteObject(hPen);
+
+        return;
     }
 }

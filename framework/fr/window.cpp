@@ -149,9 +149,41 @@ void fr::Window::close() {
     DestroyWindow(hWnd);
 }
 
+bool fr::Window::isMinimized() const {
+    WINDOWPLACEMENT wndpl;
+    GetWindowPlacement(hWnd, &wndpl);
+    return wndpl.showCmd == SW_SHOWMINIMIZED;
+}
+
+bool fr::Window::isMaximized() const {
+    WINDOWPLACEMENT wndpl;
+    GetWindowPlacement(hWnd, &wndpl);
+    return wndpl.showCmd == SW_SHOWMAXIMIZED;
+}
+
+bool fr::Window::isVisible() const {
+    return IsWindowVisible(hWnd);
+}
+
 void fr::Window::show() {
     ShowWindow(hWnd, SW_SHOW);
-    UpdateWindow(hWnd);
+}
+
+void fr::Window::showNormal() {
+    ShowWindow(hWnd, SW_NORMAL);
+}
+
+void fr::Window::showMinimized() {
+    ShowWindow(hWnd, SW_MINIMIZE);
+}
+
+void fr::Window::showMaximized() {
+    ShowWindow(hWnd, SW_MAXIMIZE);
+}
+
+void fr::Window::hide() {
+    ShowWindow(hWnd, SW_NORMAL);
+    ShowWindow(hWnd, SW_HIDE);
 }
 
 fr::Image fr::Window::capture() const {

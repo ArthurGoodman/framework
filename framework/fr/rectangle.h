@@ -18,6 +18,11 @@ public:
     int right() const;
     int bottom() const;
 
+    Point topLeft() const;
+    Point topRight() const;
+    Point bottomLeft() const;
+    Point bottomRight() const;
+
     Point center() const;
 
     RECT toNative() const;
