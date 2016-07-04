@@ -8,6 +8,7 @@
 #include "rectangle.h"
 #include "point.h"
 #include "image.h"
+#include "timerevent.h"
 #include "mouseevent.h"
 #include "mousewheelevent.h"
 #include "keyevent.h"
@@ -77,6 +78,12 @@ public:
     void showMaximized();
     void hide();
 
+    void setTimer(int id, int interval);
+    void setTimer(int interval);
+    void killTimer(int id);
+
+    void update();
+
     Image capture() const;
 
     HDC begin();
@@ -90,6 +97,7 @@ public:
 
 protected:
     virtual void closeEvent();
+    virtual void timerEvent(TimerEvent *e);
     virtual void mouseDownEvent(MouseEvent *e);
     virtual void mouseUpEvent(MouseEvent *e);
     virtual void mouseDoubleClickEvent(MouseEvent *e);

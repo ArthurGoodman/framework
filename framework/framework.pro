@@ -16,7 +16,8 @@ SOURCES += \
     fr/painter.cpp \
     fr/keyevent.cpp \
     fr/mouseevent.cpp \
-    fr/mousewheelevent.cpp
+    fr/mousewheelevent.cpp \
+    fr/timerevent.cpp
 
 HEADERS += \
     fr/application.h \
@@ -34,4 +35,5 @@ HEADERS += \
     fr.h \
     fr/keyevent.h \
     fr/mouseevent.h \
-    fr/mousewheelevent.h
+    fr/mousewheelevent.h \
+    fr/timerevent.h

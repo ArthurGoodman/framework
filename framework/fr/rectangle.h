@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #include "point.h"
+#include "size.h"
 
 namespace fr {
 
@@ -17,6 +18,11 @@ public:
     int top() const;
     int right() const;
     int bottom() const;
+
+    int width() const;
+    int height() const;
+
+    Size size() const;
 
     Point topLeft() const;
     Point topRight() const;

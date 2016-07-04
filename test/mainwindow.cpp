@@ -3,10 +3,17 @@
 #include <iostream>
 
 MainWindow::MainWindow() {
+    desktop = Application::desktop();
+
+    setTimer(16);
 }
 
 void MainWindow::closeEvent() {
     Application::instance()->quit();
+}
+
+void MainWindow::timerEvent(TimerEvent *) {
+    update();
 }
 
 void MainWindow::keyPressEvent(KeyEvent *e) {
@@ -22,5 +29,5 @@ void MainWindow::keyPressEvent(KeyEvent *e) {
 
 void MainWindow::paintEvent() {
     Painter p(this);
-    p.fillRect(rect(), Color(211, 211, 211));
+    p.drawImage(0, 0, width(), height(), desktop->capture());
 }

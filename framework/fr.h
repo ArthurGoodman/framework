@@ -11,11 +11,12 @@
 #include "fr/image.h"
 #include "fr/keyevent.h"
 #include "fr/mouseevent.h"
+#include "fr/mousewheelevent.h"
 #include "fr/painter.h"
 #include "fr/point.h"
 #include "fr/rectangle.h"
 #include "fr/size.h"
-#include "fr/mousewheelevent.h"
+#include "fr/timerevent.h"
 #include "fr/window.h"
 
 using namespace fr;

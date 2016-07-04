@@ -5,11 +5,28 @@
 //#include <gdiplus.h>
 
 fr::Painter::Painter(Canvas *canvas)
-    : canvas(canvas), color(Color::rgb(0, 0, 0)) {
-    hdc = canvas->begin();
+    : hdc(0), canvas(canvas), color(Color::rgb(0, 0, 0)) {
+    if ((hdcWindow = canvas->begin())) {
+        hdc = CreateCompatibleDC(hdcWindow);
+        hBmp = CreateCompatibleBitmap(hdcWindow, canvas->width(), canvas->height());
+        hBmpOld = SelectObject(hdc, hBmp);
+
+        RECT rc = Rectangle(0, 0, canvas->width(), canvas->height()).toNative();
+        FillRect(hdc, &rc, (HBRUSH)COLOR_WINDOW);
+
+        SetBkMode(hdc, TRANSPARENT);
+    }
 }
 
 fr::Painter::~Painter() {
+    if (hdc) {
+        BitBlt(hdcWindow, 0, 0, canvas->width(), canvas->height(), hdc, 0, 0, SRCCOPY);
+
+        SelectObject(hdc, hBmpOld);
+        DeleteObject(hBmp);
+        DeleteDC(hdc);
+    }
+
     canvas->end();
 }
 
@@ -113,6 +130,10 @@ void fr::Painter::fillRect(const Rectangle &rect, const Color &color) {
     }
 }
 
+void fr::Painter::fillRect(int x, int y, int width, int height, const fr::Color &color) {
+    fillRect(Rectangle(x, y, x + width, y + height), color);
+}
+
 void fr::Painter::drawEllipse(int x, int y, int w, int h) {
     if (hdc) {
         int left = x - w / 2;
@@ -133,14 +154,15 @@ void fr::Painter::drawEllipse(int x, int y, int w, int h) {
     }
 }
 
-void fr::Painter::drawImage(int x, int y, const Image &image) {
+void fr::Painter::drawImage(const Rectangle &rect, const Image &image) {
     if (hdc) {
         HBITMAP hBitmap = CreateBitmap(image.width(), image.height(), 1, 32, image.bits());
         HDC hdcMem = CreateCompatibleDC(hdc);
 
         HGDIOBJ oldBitmap = SelectObject(hdcMem, hBitmap);
 
-        BitBlt(hdc, x, y, image.width(), image.height(), hdcMem, 0, 0, SRCCOPY);
+        SetStretchBltMode(hdc, HALFTONE);
+        StretchBlt(hdc, rect.left(), rect.top(), rect.width(), rect.height(), hdcMem, 0, 0, image.width(), image.height(), SRCCOPY);
 
         SelectObject(hdcMem, oldBitmap);
 
@@ -152,5 +174,13 @@ void fr::Painter::drawImage(int x, int y, const Image &image) {
 
     for (int i = 0; i < image.width(); i++)
         for (int j = 0; j < image.height(); j++)
-            canvas->setPixel(x + i, y + j, image.getPixel(i, j));
+            canvas->setPixel(rect.left() + i, rect.top() + j, image.getPixel(i, j));
+}
+
+void fr::Painter::drawImage(int x, int y, const Image &image) {
+    drawImage(Rectangle(x, y, x + image.width(), y + image.height()), image);
+}
+
+void fr::Painter::drawImage(int x, int y, int width, int height, const Image &image) {
+    drawImage(Rectangle(x, y, x + width, y + height), image);
 }

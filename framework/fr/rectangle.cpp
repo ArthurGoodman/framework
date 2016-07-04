@@ -24,6 +24,18 @@ int fr::Rectangle::bottom() const {
     return _bottom;
 }
 
+int fr::Rectangle::width() const {
+    return _right - _left;
+}
+
+int fr::Rectangle::height() const {
+    return _bottom - _top;
+}
+
+fr::Size fr::Rectangle::size() const {
+    return Size(width(), height());
+}
+
 fr::Point fr::Rectangle::topLeft() const {
     return Point(_left, _top);
 }

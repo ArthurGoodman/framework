@@ -186,6 +186,26 @@ void fr::Window::hide() {
     ShowWindow(hWnd, SW_HIDE);
 }
 
+void fr::Window::setTimer(int id, int interval) {
+    SetTimer(hWnd, id, interval, 0);
+}
+
+void fr::Window::setTimer(int interval) {
+    setTimer(0, interval);
+}
+
+void fr::Window::killTimer(int id) {
+    KillTimer(hWnd, id);
+}
+
+void fr::Window::update() {
+    RECT clientRect;
+    GetClientRect(hWnd, &clientRect);
+    InvalidateRect(hWnd, &clientRect, TRUE);
+
+    UpdateWindow(hWnd);
+}
+
 fr::Image fr::Window::capture() const {
     HDC hdc = GetDC(hWnd);
     HDC hdcMemory = CreateCompatibleDC(hdc);
@@ -245,6 +265,9 @@ int fr::Window::height() const {
 }
 
 void fr::Window::closeEvent() {
+}
+
+void fr::Window::timerEvent(TimerEvent *) {
 }
 
 void fr::Window::mouseDownEvent(MouseEvent *) {
@@ -392,6 +415,9 @@ LRESULT CALLBACK fr::Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         break;
     }
 
+    case WM_ERASEBKGND:
+        return 1;
+
     case WM_PAINT:
         window->paintEvent();
         break;
@@ -412,6 +438,12 @@ LRESULT CALLBACK fr::Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         mmi->ptMaxTrackSize.x = window->maxSize.width() + dx;
         mmi->ptMaxTrackSize.y = window->maxSize.height() + dy;
 
+        break;
+    }
+
+    case WM_TIMER: {
+        TimerEvent e(wParam);
+        window->timerEvent(&e);
         break;
     }
 
@@ -438,7 +470,7 @@ void fr::Window::initialize() {
     wc.hInstance = hInst;
     wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)COLOR_WINDOWFRAME;
+    wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
     wc.lpszMenuName = NULL;
 
     std::string title = Application::instance()->moduleFileName();
@@ -450,13 +482,13 @@ void fr::Window::initialize() {
 
     RegisterClass(&wc);
 
-    //    if (!RegisterClass(&wc))
-    //        return 0;
+    // if (!RegisterClass(&wc))
+    //     return 0;
 
     hWnd = CreateWindow(wtitle.data(), wtitle.data(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, NULL, NULL, hInst, NULL);
 
-    //    if (!hwnd)
-    //        return 0;
+    // if (!hwnd)
+    //     return 0;
 
     windows[hWnd] = this;
 }

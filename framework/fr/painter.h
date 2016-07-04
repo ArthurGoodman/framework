@@ -9,9 +9,11 @@
 namespace fr {
 
 class Painter {
-    Canvas *canvas;
-    HDC hdc;
+    HDC hdcWindow, hdc;
+    HBITMAP hBmp;
+    HGDIOBJ hBmpOld;
 
+    Canvas *canvas;
     Color color;
 
 public:
@@ -26,10 +28,14 @@ public:
     void drawLine(const Point &p1, const Point &p2);
 
     void drawRect(const Rectangle &rect);
+
     void fillRect(const Rectangle &rect, const Color &color);
+    void fillRect(int x, int y, int width, int height, const Color &color);
 
     void drawEllipse(int x, int y, int w, int h);
 
+    void drawImage(const Rectangle &rect, const Image &image);
     void drawImage(int x, int y, const Image &image);
+    void drawImage(int x, int y, int width, int height, const Image &image);
 };
 }
