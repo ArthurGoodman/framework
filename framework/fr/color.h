@@ -11,7 +11,10 @@ class Color {
 
 public:
     static int rgba(byte r, byte g, byte b, byte a);
+    static int bgra(byte b, byte g, byte r, byte a);
     static int rgb(byte r, byte g, byte b);
+
+    static Color fromBgra(int bgra);
 
     static byte red(int rgba);
     static byte green(int rgba);
@@ -28,6 +31,7 @@ public:
     byte alpha() const;
 
     int rgba() const;
+    int bgra() const;
 
     COLORREF toNative() const;
 };

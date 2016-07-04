@@ -11,7 +11,7 @@ fr::Image::Image()
 fr::Image::Image(int width, int height)
     : w(width), h(height) {
     data = new byte[rawSize()];
-    std::fill(data, data + rawSize(), 0);
+    std::fill((int *)data, (int *)(data + rawSize()), Color::bgra(0, 0, 0, 255));
 }
 
 fr::Image::Image(const Image &image)
@@ -77,18 +77,15 @@ void fr::Image::save(const std::string &fileName) const {
     stream.write((char *)&dibHeader, sizeof(dibHeader));
 
     for (int y = 0; y < h; y++)
-        for (int x = 0; x < w; x++) {
-            stream.write((char *)&at(x, y)[2], 1);
-            stream.write((char *)&at(x, y)[1], 1);
-            stream.write((char *)&at(x, y)[0], 1);
-            stream.write((char *)&at(x, y)[3], 1);
-        }
+        for (int x = 0; x < w; x++)
+            for (int c = 0; c < channels; c++)
+                stream.write((char *)&at(x, y)[c], 1);
 
     stream.close();
 }
 
 void fr::Image::fill(int rgba) {
-    std::fill((int *)data, (int *)(data + rawSize()), rgba);
+    std::fill((int *)data, (int *)(data + rawSize()), Color(rgba).bgra());
 }
 
 void fr::Image::fill(const Color &color) {
@@ -97,14 +94,14 @@ void fr::Image::fill(const Color &color) {
 
 int fr::Image::getPixel(int x, int y) const {
     if (x >= 0 && x < w && y >= 0 && y < h)
-        return *(int *)at(x, y);
+        return Color::fromBgra(*(int *)at(x, y)).rgba();
 
     return 0;
 }
 
 void fr::Image::setPixel(int x, int y, int rgba) {
     if (x >= 0 && x < w && y >= 0 && y < h)
-        *(int *)at(x, y) = rgba;
+        *(int *)at(x, y) = Color(rgba).bgra();
 }
 
 void fr::Image::setPixel(int x, int y, const Color &color) {

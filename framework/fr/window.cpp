@@ -204,22 +204,10 @@ fr::Image fr::Window::capture() const {
     info.bmiHeader.biCompression = BI_RGB;
     info.bmiHeader.biHeight = -info.bmiHeader.biHeight;
 
-    byte *pixels = new byte[info.bmiHeader.biSizeImage];
-
-    if (!GetDIBits(hdc, hbmp, 0, info.bmiHeader.biHeight, pixels, &info, DIB_RGB_COLORS))
-        return Image();
-
     Image image(info.bmiHeader.biWidth, -info.bmiHeader.biHeight);
-    byte *bits = image.bits();
 
-    for (uint i = 0; i < info.bmiHeader.biSizeImage / 4; i++) {
-        bits[4 * i + 0] = pixels[4 * i + 2];
-        bits[4 * i + 1] = pixels[4 * i + 1];
-        bits[4 * i + 2] = pixels[4 * i + 0];
-        bits[4 * i + 3] = pixels[4 * i + 3];
-    }
-
-    delete[] pixels;
+    if (!GetDIBits(hdc, hbmp, 0, info.bmiHeader.biHeight, image.bits(), &info, DIB_RGB_COLORS))
+        return Image();
 
     DeleteDC(hdcMemory);
     DeleteObject(hbmp);
@@ -436,7 +424,6 @@ LRESULT CALLBACK fr::Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 
 fr::Window::Window(HWND hWnd)
     : hWnd(hWnd) {
-    defaults();
 }
 
 void fr::Window::initialize() {

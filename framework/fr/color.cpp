@@ -4,8 +4,16 @@ int fr::Color::rgba(byte r, byte g, byte b, byte a) {
     return a << 24 | b << 16 | g << 8 | r;
 }
 
+int fr::Color::bgra(byte b, byte g, byte r, byte a) {
+    return a << 24 | r << 16 | g << 8 | b;
+}
+
 int fr::Color::rgb(byte r, byte g, byte b) {
     return rgba(r, g, b, 255);
+}
+
+fr::Color fr::Color::fromBgra(int bgra) {
+    return Color(blue(bgra), green(bgra), red(bgra), alpha(bgra));
 }
 
 byte fr::Color::red(int rgba) {
@@ -54,6 +62,10 @@ byte fr::Color::alpha() const {
 
 int fr::Color::rgba() const {
     return rgba(r, g, b, a);
+}
+
+int fr::Color::bgra() const {
+    return bgra(b, g, r, a);
 }
 
 COLORREF fr::Color::toNative() const {
