@@ -5,6 +5,10 @@
 MainWindow::MainWindow() {
     desktop = Application::desktop();
 
+    setMinimumSize(desktop->size() / 4);
+    resize(1280, 720);
+    move(desktop->rect().center() - rect().center());
+
     setTimer(16);
 }
 

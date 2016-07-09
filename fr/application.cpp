@@ -1,6 +1,6 @@
 #include "application.h"
 
-#include <windows.h>
+#include <gdiplus.h>
 
 #include "window.h"
 #include "file.h"
@@ -17,6 +17,9 @@ fr::Window *fr::Application::desktop() {
 
 fr::Application::Application(int /*argc*/, const char ** /*argv*/) {
     application = this;
+
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, 0);
 }
 
 void fr::Application::exit(int code) {
@@ -47,6 +50,8 @@ int fr::Application::run() {
             DispatchMessage(&msg);
         }
     }
+
+    Gdiplus::GdiplusShutdown(gdiplusToken);
 
     return 0;
 }

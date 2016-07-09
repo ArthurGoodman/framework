@@ -2,7 +2,7 @@
 
 #include <windows.h>
 #include <algorithm>
-//#include <gdiplus.h>
+#include <gdiplus.h>
 
 fr::Painter::Painter(Canvas *canvas)
     : hdc(0), canvas(canvas), color(Color::rgb(0, 0, 0)) {
@@ -44,19 +44,20 @@ void fr::Painter::setColor(const Color &color) {
 
 void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
     if (hdc) {
-        HPEN hPen = CreatePen(PS_SOLID, 1, color.toNative());
+        //        HPEN hPen = CreatePen(PS_SOLID, 1, color.toNative());
 
-        SelectObject(hdc, hPen);
+        //        SelectObject(hdc, hPen);
 
-        MoveToEx(hdc, x0, y0, 0);
-        LineTo(hdc, x1, y1);
+        //        MoveToEx(hdc, x0, y0, 0);
+        //        LineTo(hdc, x1, y1);
 
-        DeleteObject(hPen);
+        //        DeleteObject(hPen);
 
-        // using namespace Gdiplus;
-        // Graphics g(hdc);
-        // Pen pen(Gdiplus::Color(255, 0, 0));
-        // g.DrawLine(&pen, x0, y0, x1, y1);
+        using namespace Gdiplus;
+        Graphics g(hdc);
+        g.SetSmoothingMode(SmoothingModeAntiAlias);
+        Pen pen(Gdiplus::Color(255, 0, 0));
+        g.DrawLine(&pen, x0, y0, x1, y1);
 
         return;
     }
