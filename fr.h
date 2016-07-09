@@ -17,6 +17,7 @@
 #include "fr/rectangle.h"
 #include "fr/size.h"
 #include "fr/timerevent.h"
+#include "fr/vector2.h"
 #include "fr/window.h"
 
 using namespace fr;

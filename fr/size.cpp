@@ -40,6 +40,14 @@ fr::Size fr::Size::operator/(int f) const {
     return Size(_width / f, _height / f);
 }
 
+fr::Size fr::Size::operator*(double f) const {
+    return Size(_width * f, _height * f);
+}
+
+fr::Size fr::Size::operator/(double f) const {
+    return Size(_width / f, _height / f);
+}
+
 SIZE fr::Size::toNative() const {
     return {_width, _height};
 }

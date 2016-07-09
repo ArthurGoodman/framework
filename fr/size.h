@@ -21,6 +21,8 @@ public:
     Size operator-(const Size &size) const;
     Size operator*(int f) const;
     Size operator/(int f) const;
+    Size operator*(double f) const;
+    Size operator/(double f) const;
 
     SIZE toNative() const;
 };

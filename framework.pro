@@ -19,7 +19,8 @@ HEADERS += \
     fr/size.h \
     fr/timerevent.h \
     fr/window.h \
-    fr.h
+    fr.h \
+    fr/vector2.h
 
 SOURCES += \
     fr/application.cpp \
@@ -36,4 +37,5 @@ SOURCES += \
     fr/rectangle.cpp \
     fr/size.cpp \
     fr/timerevent.cpp \
-    fr/window.cpp
+    fr/window.cpp \
+    fr/vector2.cpp

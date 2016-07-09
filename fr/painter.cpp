@@ -5,7 +5,7 @@
 #include <gdiplus.h>
 
 fr::Painter::Painter(Canvas *canvas)
-    : hdc(0), canvas(canvas), color(Color::rgb(0, 0, 0)) {
+    : hdc(0), canvas(canvas), color(Color::rgb(0, 0, 0)), antialiasing(false) {
     if ((hdcWindow = canvas->begin())) {
         hdc = CreateCompatibleDC(hdcWindow);
         hBmp = CreateCompatibleBitmap(hdcWindow, canvas->width(), canvas->height());
@@ -42,21 +42,17 @@ void fr::Painter::setColor(const Color &color) {
     this->color = color;
 }
 
+void fr::Painter::setAntialiasing(bool antialiasing) {
+    this->antialiasing = antialiasing;
+}
+
 void fr::Painter::drawLine(int x0, int y0, int x1, int y1) {
     if (hdc) {
-        //        HPEN hPen = CreatePen(PS_SOLID, 1, color.toNative());
-
-        //        SelectObject(hdc, hPen);
-
-        //        MoveToEx(hdc, x0, y0, 0);
-        //        LineTo(hdc, x1, y1);
-
-        //        DeleteObject(hPen);
-
         using namespace Gdiplus;
         Graphics g(hdc);
-        g.SetSmoothingMode(SmoothingModeAntiAlias);
-        Pen pen(Gdiplus::Color(255, 0, 0));
+        if (antialiasing)
+            g.SetSmoothingMode(SmoothingModeAntiAlias);
+        Pen pen(Gdiplus::Color(color.alpha(), color.red(), color.green(), color.blue()));
         g.DrawLine(&pen, x0, y0, x1, y1);
 
         return;
@@ -120,12 +116,12 @@ void fr::Painter::drawRect(const Rectangle &rect) {
 
 void fr::Painter::fillRect(const Rectangle &rect, const Color &color) {
     if (hdc) {
-        RECT r = rect.toNative();
-        HBRUSH hBrush = CreateSolidBrush(color.toNative());
-
-        FillRect(hdc, &r, hBrush);
-
-        DeleteObject(hBrush);
+        using namespace Gdiplus;
+        Graphics g(hdc);
+        SolidBrush brush(Gdiplus::Color(color.alpha(), color.red(), color.green(), color.blue()));
+        if (antialiasing)
+            g.SetSmoothingMode(SmoothingModeAntiAlias);
+        g.FillRectangle(&brush, Rect(rect.left(), rect.top(), rect.width(), rect.height()));
 
         return;
     }
@@ -143,22 +139,36 @@ void fr::Painter::fillRect(int x, int y, int width, int height, const fr::Color 
 
 void fr::Painter::drawEllipse(int x, int y, int w, int h) {
     if (hdc) {
-        int left = x - w / 2;
-        int top = y - h / 2;
-        int right = x + w / 2;
-        int bottom = y + h / 2;
-
-        HPEN hPen = CreatePen(PS_SOLID, 1, color.toNative());
-
-        SelectObject(hdc, hPen);
-        SelectObject(hdc, GetStockObject(NULL_BRUSH));
-
-        Ellipse(hdc, left, top, right, bottom);
-
-        DeleteObject(hPen);
+        using namespace Gdiplus;
+        Graphics g(hdc);
+        if (antialiasing)
+            g.SetSmoothingMode(SmoothingModeAntiAlias);
+        Pen pen(Gdiplus::Color(color.alpha(), color.red(), color.green(), color.blue()));
+        g.DrawEllipse(&pen, x, y, w, h);
 
         return;
     }
+}
+
+void fr::Painter::drawEllipse(const Point &center, int rx, int ry) {
+    drawEllipse(center.x() - rx, center.y() - ry, 2 * rx, 2 * ry);
+}
+
+void fr::Painter::fillEllipse(int x, int y, int w, int h) {
+    if (hdc) {
+        using namespace Gdiplus;
+        Graphics g(hdc);
+        if (antialiasing)
+            g.SetSmoothingMode(SmoothingModeAntiAlias);
+        SolidBrush brush(Gdiplus::Color(color.alpha(), color.red(), color.green(), color.blue()));
+        g.FillEllipse(&brush, x, y, w, h);
+
+        return;
+    }
+}
+
+void fr::Painter::fillEllipse(const fr::Point &center, int rx, int ry) {
+    fillEllipse(center.x() - rx, center.y() - ry, 2 * rx, 2 * ry);
 }
 
 void fr::Painter::drawImage(const Rectangle &rect, const Image &image) {
