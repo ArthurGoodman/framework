@@ -194,18 +194,21 @@ void fr::Painter::fillEllipse(const fr::Point &center, int rx, int ry) {
 
 void fr::Painter::drawImage(const Rectangle &rect, const Image &image) {
     if (hdc) {
-        HBITMAP hBitmap = CreateBitmap(image.width(), image.height(), 1, 32, image.bits());
-        HDC hdcMem = CreateCompatibleDC(hdc);
+        // HBITMAP hBitmap = CreateBitmap(image.width(), image.height(), 1, 32, image.bits());
+        // HDC hdcMem = CreateCompatibleDC(hdc);
 
-        HGDIOBJ oldBitmap = SelectObject(hdcMem, hBitmap);
+        // HGDIOBJ oldBitmap = SelectObject(hdcMem, hBitmap);
 
-        SetStretchBltMode(hdc, HALFTONE);
-        StretchBlt(hdc, rect.left(), rect.top(), rect.width(), rect.height(), hdcMem, 0, 0, image.width(), image.height(), SRCCOPY);
+        // SetStretchBltMode(hdc, HALFTONE);
+        // StretchBlt(hdc, rect.left(), rect.top(), rect.width(), rect.height(), hdcMem, 0, 0, image.width(), image.height(), SRCCOPY);
 
-        SelectObject(hdcMem, oldBitmap);
+        // SelectObject(hdcMem, oldBitmap);
 
-        DeleteDC(hdcMem);
-        DeleteObject(hBitmap);
+        // DeleteDC(hdcMem);
+        // DeleteObject(hBitmap);
+
+        Gdiplus::Bitmap bitmap(image.width(), image.height(), image.width() * 4, PixelFormat32bppARGB, (BYTE *)image.bits());
+        graphics->DrawImage(&bitmap, Gdiplus::Rect(rect.left(), rect.top(), rect.width(), rect.height()));
 
         return;
     }
