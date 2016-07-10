@@ -6,6 +6,8 @@
 #include "rectangle.h"
 #include "image.h"
 
+#include <gdiplus.h>
+
 namespace fr {
 
 class Painter {
@@ -17,6 +19,8 @@ class Painter {
     Color color;
 
     bool antialiasing;
+
+    Gdiplus::Graphics *graphics;
 
 public:
     Painter(Canvas *canvas);
