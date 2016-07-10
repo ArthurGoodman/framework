@@ -148,7 +148,16 @@ void fr::Painter::drawEllipse(int x, int y, int w, int h) {
             graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 
         Gdiplus::Pen pen(Gdiplus::Color(color.alpha(), color.red(), color.green(), color.blue()));
-        graphics->DrawEllipse(&pen, x, y, w, h);
+        // graphics->DrawEllipse(&pen, x, y, w, h);
+
+        static const int n = 8;
+
+        Gdiplus::Point points[n];
+
+        for (int i = 0; i < n; i++)
+            points[i] = Gdiplus::Point(x + (w + 1) / 2.0 * (cos(i * 2.0 * M_PI / n) + 1), y + (h + 1) / 2.0 * (sin(i * 2.0 * M_PI / n) + 1));
+
+        graphics->DrawPolygon(&pen, points, n);
 
         return;
     }
@@ -164,7 +173,16 @@ void fr::Painter::fillEllipse(int x, int y, int w, int h) {
             graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 
         Gdiplus::SolidBrush brush(Gdiplus::Color(color.alpha(), color.red(), color.green(), color.blue()));
-        graphics->FillEllipse(&brush, x, y, w, h);
+        // graphics->FillEllipse(&brush, x, y, w, h);
+
+        static const int n = 8;
+
+        Gdiplus::Point points[n];
+
+        for (int i = 0; i < n; i++)
+            points[i] = Gdiplus::Point(x + (w + 1) / 2.0 * (cos(i * 2.0 * M_PI / n) + 1), y + (h + 1) / 2.0 * (sin(i * 2.0 * M_PI / n) + 1));
+
+        graphics->FillPolygon(&brush, points, n);
 
         return;
     }
