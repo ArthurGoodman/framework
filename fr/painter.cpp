@@ -15,7 +15,11 @@ fr::Painter::Painter(Canvas *canvas)
 
         graphics = new Gdiplus::Graphics(hdc);
 
-        // SetBkMode(hdc, TRANSPARENT);
+        graphics->SetCompositingMode(Gdiplus::CompositingModeSourceCopy);
+        graphics->SetCompositingQuality(Gdiplus::CompositingQualityHighSpeed);
+        graphics->SetPixelOffsetMode(Gdiplus::PixelOffsetModeNone);
+        graphics->SetSmoothingMode(Gdiplus::SmoothingModeNone);
+        graphics->SetInterpolationMode(Gdiplus::InterpolationModeDefault);
     }
 }
 
