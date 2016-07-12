@@ -22,6 +22,9 @@ class Painter {
 
     Gdiplus::Graphics *graphics;
 
+    static const int circleDetail;
+    static Gdiplus::PointF circlePoints[];
+
 public:
     Painter(Canvas *canvas);
     ~Painter();

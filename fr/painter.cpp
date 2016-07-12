@@ -3,6 +3,9 @@
 #include <windows.h>
 #include <algorithm>
 
+const int fr::Painter::circleDetail = 8;
+Gdiplus::PointF fr::Painter::circlePoints[circleDetail];
+
 fr::Painter::Painter(Canvas *canvas)
     : hdc(0), canvas(canvas), color(Color::rgb(0, 0, 0)), antialiasing(false) {
     if ((hdcWindow = canvas->begin())) {
@@ -20,6 +23,9 @@ fr::Painter::Painter(Canvas *canvas)
         graphics->SetPixelOffsetMode(Gdiplus::PixelOffsetModeNone);
         graphics->SetSmoothingMode(Gdiplus::SmoothingModeNone);
         graphics->SetInterpolationMode(Gdiplus::InterpolationModeDefault);
+
+        for (int i = 0; i < circleDetail; i++)
+            circlePoints[i] = Gdiplus::PointF((cos(i * 2.0 * M_PI / circleDetail) + 1) / 2, (sin(i * 2.0 * M_PI / circleDetail) + 1) / 2);
     }
 }
 
@@ -148,16 +154,14 @@ void fr::Painter::drawEllipse(int x, int y, int w, int h) {
             graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 
         Gdiplus::Pen pen(Gdiplus::Color(color.alpha(), color.red(), color.green(), color.blue()));
-        // graphics->DrawEllipse(&pen, x, y, w, h);
+        graphics->DrawEllipse(&pen, x, y, w, h);
 
-        static const int n = 8;
+        //        Gdiplus::Point points[circleDetail];
 
-        Gdiplus::Point points[n];
+        //        for (int i = 0; i < circleDetail; i++)
+        //            points[i] = Gdiplus::Point(x + (w + 1) * circlePoints[i].X, y + (h + 1) * circlePoints[i].Y);
 
-        for (int i = 0; i < n; i++)
-            points[i] = Gdiplus::Point(x + (w + 1) / 2.0 * (cos(i * 2.0 * M_PI / n) + 1), y + (h + 1) / 2.0 * (sin(i * 2.0 * M_PI / n) + 1));
-
-        graphics->DrawPolygon(&pen, points, n);
+        //        graphics->DrawPolygon(&pen, points, circleDetail);
 
         return;
     }
@@ -173,16 +177,14 @@ void fr::Painter::fillEllipse(int x, int y, int w, int h) {
             graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 
         Gdiplus::SolidBrush brush(Gdiplus::Color(color.alpha(), color.red(), color.green(), color.blue()));
-        // graphics->FillEllipse(&brush, x, y, w, h);
+        graphics->FillEllipse(&brush, x, y, w, h);
 
-        static const int n = 8;
+        //        Gdiplus::Point points[circleDetail];
 
-        Gdiplus::Point points[n];
+        //        for (int i = 0; i < circleDetail; i++)
+        //            points[i] = Gdiplus::Point(x + (w + 1) * circlePoints[i].X, y + (h + 1) * circlePoints[i].Y);
 
-        for (int i = 0; i < n; i++)
-            points[i] = Gdiplus::Point(x + (w + 1) / 2.0 * (cos(i * 2.0 * M_PI / n) + 1), y + (h + 1) / 2.0 * (sin(i * 2.0 * M_PI / n) + 1));
-
-        graphics->FillPolygon(&brush, points, n);
+        //        graphics->FillPolygon(&brush, points, circleDetail);
 
         return;
     }
