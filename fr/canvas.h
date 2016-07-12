@@ -22,6 +22,6 @@ public:
     virtual int width() const = 0;
     virtual int height() const = 0;
 
-    Size size();
+    Size size() const;
 };
 }

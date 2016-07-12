@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "canvas.h"
+#include "rectangle.h"
 
 namespace fr {
 
@@ -68,6 +69,9 @@ public:
 
     Image scaled(const Size &size) const;
     Image scaled(int width, int height) const;
+
+    Image cropped(const Rectangle &rect) const;
+    Image cropped(int left, int top, int right, int bottom) const;
 
     int getPixel(int x, int y) const;
     void setPixel(int x, int y, int rgba);

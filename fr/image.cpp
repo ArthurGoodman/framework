@@ -189,6 +189,52 @@ fr::Image fr::Image::scaled(int width, int height) const {
     return scaled(Size(width, height));
 }
 
+fr::Image fr::Image::cropped(const Rectangle &rect) const {
+    Image result(rect.size());
+
+    HDC hdc = GetDC(0);
+
+    HDC hdcMem = CreateCompatibleDC(hdc);
+    HBITMAP hBitmap = CreateBitmap(width(), height(), 1, 32, bits());
+
+    HGDIOBJ oldBitmap = SelectObject(hdcMem, hBitmap);
+
+    BITMAPINFO info;
+    info.bmiHeader.biWidth = result.width();
+    info.bmiHeader.biHeight = -result.height();
+    info.bmiHeader.biBitCount = 32;
+    info.bmiHeader.biPlanes = 1;
+    info.bmiHeader.biCompression = 0;
+    info.bmiHeader.biSize = sizeof(BITMAPINFO);
+
+    void *bits;
+
+    HDC hdcResultMem = CreateCompatibleDC(hdc);
+    HBITMAP hResultBitmap = CreateDIBSection(hdcResultMem, &info, DIB_RGB_COLORS, &bits, 0, 0);
+
+    HGDIOBJ oldResultBitmap = SelectObject(hdcResultMem, hResultBitmap);
+
+    BitBlt(hdcResultMem, 0, 0, result.width(), result.height(), hdcMem, rect.left(), rect.top(), SRCCOPY);
+
+    SelectObject(hdcMem, oldBitmap);
+
+    DeleteDC(hdcMem);
+    DeleteObject(hBitmap);
+
+    memcpy(result.bits(), bits, result.rawSize());
+
+    SelectObject(hdcResultMem, oldResultBitmap);
+
+    DeleteDC(hdcResultMem);
+    DeleteObject(hResultBitmap);
+
+    return result;
+}
+
+fr::Image fr::Image::cropped(int left, int top, int right, int bottom) const {
+    return cropped(Rectangle(left, top, right, bottom));
+}
+
 int fr::Image::getPixel(int x, int y) const {
     if (x >= 0 && x < w && y >= 0 && y < h)
         return Color::fromBgra(*(int *)at(x, y)).rgba();
